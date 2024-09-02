@@ -1,5 +1,8 @@
 from app import app
+from flask               import render_template
 
-@app.route('/')
-def index():
-    return "Hello World"
+# Index
+@app.route('/', defaults={'path': 'index.html'})
+@app.route('/path')
+def index(path: str) -> str:
+    return render_template(path)
