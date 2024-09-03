@@ -1,0 +1,23 @@
+{% extends "layouts/base.html" %}
+{% block title %}Sign Up{% endblock %}
+{{ super() }}
+{% block content %}
+<div class="container" style="height: 80vh;">
+	<div class="row d-flex align-items-center h-100">
+		<div class="col-md-12">
+			<form>
+				<h2 class="text-center">Sign Up</h2>
+			  <div class="mb-3">
+				<label for="Username" class="form-label">Username</label>
+				<input type="text" class="form-control" id="InputUsername" aria-describedby="UsernameHelp">
+			  </div>
+			  <div class="mb-3">
+				<label for="InputPassword" class="form-label">Password</label>
+				<input type="password" class="form-control" id="InputPassword">
+			  </div>
+			  <button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock %}
