@@ -1,8 +1,7 @@
-from enum import unique
-from sqlalchemy.orm import Mapped, mapped_column
+from flask_login import UserMixin
 from app import db
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id: int = db.Column(db.Integer, primary_key=True)
     username: str = db.Column(db.String(64), unique=True)
     password: str = db.Column(db.String(500))
