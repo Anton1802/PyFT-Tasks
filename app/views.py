@@ -1,7 +1,7 @@
-from flask_login import login_user
+from flask_login import login_user, login_required, logout_user
 from werkzeug.wrappers import Response
 from app import app
-from flask import redirect, render_template, request 
+from flask import redirect, render_template, request, url_for 
 from app.forms import UpandInForm
 from app.models import User
 from app import bc
@@ -47,6 +47,7 @@ def signup() -> str:
 
     return render_template('signup.html', form=signup_form, msg=msg)
 
+# SignIn
 @app.route('/signin', methods=['GET', 'POST'])
 def signin() -> str | Response:
     signin_form = UpandInForm(request.form)
@@ -63,10 +64,16 @@ def signin() -> str | Response:
         if user:
             if bc.check_password_hash(user.password, password):
                 login_user(user)
-                return redirect('/')
+                return redirect(url_for('index'))
             else:
                 msg = "Wrong password. Please try again"
         else:
             msg = "Unknown User!"
 
     return render_template('signin.html', form=signin_form, msg=msg)
+
+@app.route("/logout")
+@login_required
+def logout() -> Response:
+    logout_user()
+    return redirect(url_for('index'))
