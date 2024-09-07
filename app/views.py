@@ -78,6 +78,11 @@ def signin() -> str | Response:
 
     return render_template('signin.html', form=signin_form, msg=msg)
 
+@app.route("/mytodo")
+@login_required
+def mytodo() -> str:
+    return render_template('mytodo.html')
+
 @app.route("/logout")
 @login_required
 def logout() -> Response:

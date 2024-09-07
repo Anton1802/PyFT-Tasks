@@ -1,0 +1,78 @@
+{% extends "layouts/base.html" %}
+{% block title %}My To-Do{% endblock %}
+{{ super() }}
+{% block content %}
+	<div class="container-fluid mt-4">
+		<div class="row">
+			<div class="col-6 d-flex justify-content-center align-items-center">
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#st1">
+				  Add Task
+				</button>
+			</div>
+			<div class="col-6 d-flex justify-content-center align-items-center">
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#st2">
+				 Setting Notice 
+				</button>
+			</div>
+		</div>
+		<div class="row h-100 mt-3">
+			<div class="col-12 d-flex justify-content-center">	
+				<div class="card" style="width: 100%">
+					<h2 class="card-title text-center mt-3">My Tasks</h2>
+					<div class="card-body">
+						<p>You don't have tasks.</p> 
+						<p>Please click button "Add Task"</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- Modal -->
+<div class="modal fade" id="st1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Add Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+		<div class="input-group mb-3">
+			<span class="input-group-text" id="basic-addon1">Name Task</span>
+			<input type="text" id="input-nametask" class="form-control" placeholder="Name task" aria-label="Name task" aria-describedby="basic-addon1">
+		</div>
+		<div class="input-group mb-3">
+		  <span class="input-group-text">Description</span>
+		  <textarea class="form-control" id="input-description" placeholder="Description..." aria-label="Description"></textarea>
+		</div>
+		<div class="input-group mb-3">
+            <span class="input-group-text">DaT Success</span>
+            <input type="datetime-local" class="form-control" id="input-dat">
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="st2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        2 modal
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
