@@ -1,4 +1,4 @@
-from flask_login import login_user, login_required, logout_user
+from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.wrappers import Response
 from app import app
 from flask import redirect, render_template, request, url_for 
@@ -18,7 +18,10 @@ def index() -> str:
 
 # SignUp
 @app.route('/signup', methods=['GET', 'POST'])
-def signup() -> str:
+def signup() -> str | Response:
+    if getattr(current_user, 'is_authenticated', False):
+        return redirect(url_for('index'))
+
     signup_form: UpandInForm = UpandInForm(request.form)
 
     msg: None | str = None
@@ -50,6 +53,9 @@ def signup() -> str:
 # SignIn
 @app.route('/signin', methods=['GET', 'POST'])
 def signin() -> str | Response:
+    if getattr(current_user, 'is_authenticated', False):
+        return redirect(url_for('index'))
+
     signin_form = UpandInForm(request.form)
 
     msg: str | None = None
