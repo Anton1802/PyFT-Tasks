@@ -1,9 +1,10 @@
+from datetime import datetime
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.wrappers import Response
 from app import app
 from flask import redirect, render_template, request, url_for 
 from app.forms import UpandInForm
-from app.models import User
+from app.models import Task, User
 from app import bc
 from app import lm
 
@@ -82,6 +83,25 @@ def signin() -> str | Response:
 @login_required
 def mytodo() -> str:
     return render_template('mytodo.html')
+
+@app.route("/mytodo/add", methods=['POST'])
+@login_required
+def mytodo_add():
+    name_task: str | None = request.form.get('name-task')
+    desc_task: str | None = request.form.get('desc-task')
+    dat_success: str | None = request.form.get('dat-succes')
+    
+    msg = None
+
+    if dat_success is not None:
+        dt: datetime = datetime.strptime(dat_success, '%Y-%m-%dT%H:%M')
+        task_new: Task = Task(name_task, desc_task, dt, current_user.get_id())
+
+        task_new.save()
+
+        msg = "Task added successfully!"
+
+    return msg
 
 @app.route("/logout")
 @login_required
