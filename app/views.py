@@ -1,12 +1,13 @@
 from datetime import datetime
+from typing import List
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.wrappers import Response
 from app import app
 from flask import redirect, render_template, request, url_for 
 from app.forms import UpandInForm
 from app.models import Task, User
-from app import bc
-from app import lm
+from app import bc, lm
+import jsonpickle
 
 @lm.user_loader
 def load_user(user_id):
@@ -102,6 +103,18 @@ def mytodo_add():
         msg = "Task added successfully!"
 
     return msg
+
+@app.route("/mytodo/get", methods=['GET'])
+@login_required
+def mytodo_get():
+    user_id = current_user.get_id()
+    tasks: List = Task.query.filter_by(user_id=user_id).all()
+
+    for task in tasks:
+        iso_string: str = task.dat_success.isoformat()
+        task.dat_success = iso_string
+
+    return jsonpickle.encode(tasks)
 
 @app.route("/logout")
 @login_required

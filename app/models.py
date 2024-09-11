@@ -1,5 +1,5 @@
 from flask_login import UserMixin
-from sqlalchemy import Nullable
+from sqlalchemy import Nullable, ScalarResult
 from sqlalchemy.types import DateTime
 from app import db
 
