@@ -16,7 +16,11 @@ function submitAddTask(){
 	}
 	xhttp.open("POST", 'mytodo/add', true)
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhttp.send(`name-task=${nameTaskInput.value}&desc-task=${descriptionTaskInput.value}&dat-succes=${datSuccessTaskInput.value}`)
+	xhttp.send(
+			   `name-task=${nameTaskInput.value}&` + 
+			   `desc-task=${descriptionTaskInput.value}&` +
+			   `dat-succes=${datSuccessTaskInput.value}`
+	);
 
 	bootstrap.Modal.getInstance(modalWindow).hide()
 }
@@ -32,10 +36,17 @@ function updateListTask(){
 		if(this.status == 200){
 			let jsonText = JSON.parse(xhttp.responseText);
 			let listGroup = document.getElementById("task-list");
+
 			listGroup.innerHTML = ""
+
 			for (let i = 0; i < jsonText.length; i++){
 				let newTask = document.createElement("li");
-				newTask.classList.add("list-group-item", "list-group-item-primary", "d-flex");
+
+				newTask.classList.add("list-group-item");
+				newTask.classList.add('list-group-item-action');
+
+				$(newTask).attr('data-id', jsonText[i]['id']);	
+
 				let date = new Date(jsonText[i]['dat_success'])
 				let dateTimeString = date.toLocaleString('ru-RU', {
 				  year: 'numeric',
@@ -45,14 +56,11 @@ function updateListTask(){
 				  minute: '2-digit',
 				  second: '2-digit'
 				});
-				newTask.textContent = `Name task: ${truncate(jsonText[i]['name'], 15)} Dat Success: ${dateTimeString}`;
-				listGroup.appendChild(newTask);
 
-				let buttonView = document.createElement('button');
-				buttonView.setAttribute("type", "button");
-				buttonView.classList.add('btn', 'btn-primary', 'button-view', "ms-auto");
-				buttonView.textContent = "View";
-				newTask.appendChild(buttonView);
+				newTask.textContent = `Name task: ${truncate(jsonText[i]['name'], 15)} ` +
+									  `Dat Success: ${dateTimeString}`;
+
+				listGroup.appendChild(newTask);
 			}
 		}
 	}
@@ -62,3 +70,11 @@ function updateListTask(){
 }
 
 document.addEventListener("DOMContentLoaded", updateListTask);
+
+window.onload = function() {
+	$('.list-group-item').hover(function() {
+		$(this).addClass('active');
+	}, function(){
+		$(this).removeClass('active');
+	})
+}
