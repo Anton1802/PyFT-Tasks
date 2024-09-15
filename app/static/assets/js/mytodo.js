@@ -1,3 +1,12 @@
+async function getTaskById(id){
+	let response = await fetch('mytodo/get');
+	let jsonText = await response.json()
+
+	task = jsonText.filter((task) => task.id == id)[0];
+
+	return task;
+}
+
 function submitAddTask(){
 	let nameTaskInput = document.getElementById('input-nametask')
 	let descriptionTaskInput = document.getElementById('input-description')
@@ -69,12 +78,32 @@ function updateListTask(){
 	xhttp.send()
 }
 
-document.addEventListener("DOMContentLoaded", updateListTask);
-
-window.onload = function() {
-	$('.list-group-item').hover(function() {
-		$(this).addClass('active');
-	}, function(){
-		$(this).removeClass('active');
+async function modalViewTask(){
+	$('.list-group-item').click(async function(e) {
+		e.preventDefault();
+		let id = $(this).data('id')
+		let task = await getTaskById(id);
+		
+		let modal = new bootstrap.Modal($('#modal-view'));
+		modal.show()
+		$('#input-nametask2').val(task.name);
+		$('#input-description2').val(task.description);
+		$('#input-dat2').val(task.dat_success)
 	})
 }
+
+function hoverListItem(){
+	$('.list-group-item').hover(function(e) {
+		e.preventDefault();
+		$(this).addClass("active");
+	}, function(e) {
+		e.preventDefault();
+		$(this).removeClass('active')
+	})
+}
+
+$(window).on('load', function() {
+	updateListTask();
+	setTimeout(hoverListItem, 400);
+	setTimeout(modalViewTask, 400);
+})

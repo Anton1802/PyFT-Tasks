@@ -56,6 +56,37 @@
   </div>
 </div>
 
+<!-- Modal -->
+<div class="modal fade" id="modal-view" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Task</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+		<div class="input-group mb-3">
+			<span class="input-group-text" id="basic-addon1">Name Task</span>
+			<input type="text" id="input-nametask2" class="form-control" placeholder="Name task" aria-label="Name task" aria-describedby="basic-addon1">
+		</div>
+		<div class="input-group mb-3">
+		  <span class="input-group-text">Description</span>
+		  <textarea class="form-control" id="input-description2" placeholder="Description..." aria-label="Description"></textarea>
+		</div>
+		<div class="input-group mb-3">
+            <span class="input-group-text">DaT Success</span>
+            <input type="datetime-local" class="form-control" id="input-dat2">
+		</div>
+      </div>
+      <div class="modal-footer">
+        <button onclick="submitEditTask()" type="button" class="btn btn-success">Edit</button>
+        <button onclick="submitDeleteTask()" type="button" class="btn btn-danger">Delete</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="st2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

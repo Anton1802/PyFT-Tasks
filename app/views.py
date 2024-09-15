@@ -3,11 +3,12 @@ from typing import List
 from flask_login import current_user, login_user, login_required, logout_user
 from werkzeug.wrappers import Response
 from app import app
-from flask import redirect, render_template, request, url_for 
+from flask import jsonify, redirect, render_template, request, url_for 
 from app.forms import UpandInForm
 from app.models import Task, User
 from app import bc, lm
-import jsonpickle
+from typing import cast
+
 
 @lm.user_loader
 def load_user(user_id):
@@ -92,29 +93,37 @@ def mytodo_add():
     desc_task: str | None = request.form.get('desc-task')
     dat_success: str | None = request.form.get('dat-succes')
     
-    msg = None
+    msg: str = ""
+    
+    user = cast(User, current_user)
 
     if dat_success is not None:
         dt: datetime = datetime.strptime(dat_success, '%Y-%m-%dT%H:%M')
-        task_new: Task = Task(name_task, desc_task, dt, current_user.get_id())
+        task_new: Task = Task(name_task, desc_task, dt, user.get_id())
 
         task_new.save()
 
-        msg = "Task added successfully!"
+        msg: str = "Task added successfully!"
 
-    return msg
+    return msg 
 
 @app.route("/mytodo/get", methods=['GET'])
 @login_required
 def mytodo_get():
-    user_id = current_user.get_id()
-    tasks: List = Task.query.filter_by(user_id=user_id).all()
+    user = cast(User, current_user)
+    tasks: List = Task.query.filter_by(user_id=user.get_id()).all()
 
+    tasks_data = []
     for task in tasks:
-        iso_string: str = task.dat_success.isoformat()
-        task.dat_success = iso_string
+        task_data = {
+            "id": task.id,
+            "name": task.name,
+            "description": task.description,
+            "dat_success": task.dat_success.isoformat(),
+        }
+        tasks_data.append(task_data)
 
-    return jsonpickle.encode(tasks)
+    return jsonify(tasks_data)
 
 @app.route("/logout")
 @login_required
