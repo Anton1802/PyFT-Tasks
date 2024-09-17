@@ -1,5 +1,4 @@
 from flask_login import UserMixin
-from sqlalchemy import Nullable, ScalarResult
 from sqlalchemy.types import DateTime
 from app import db
 
@@ -36,5 +35,10 @@ class Task(db.Model):
        
     def save(self):
         db.session.add(self)
+        db.session.commit()
+        return self
+
+    def delete(self):
+        db.session.delete(self)
         db.session.commit()
         return self
