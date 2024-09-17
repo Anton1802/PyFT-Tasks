@@ -47,7 +47,7 @@ def signup() -> str | Response:
 
             user.save()
 
-            msg = 'User created!'
+            msg = f"User created! <a href={url_for('signin')}>Click</a>"
     else:
         msg = 'Input error'
 
