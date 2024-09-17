@@ -86,6 +86,7 @@ def signin() -> str | Response:
 def mytodo() -> str:
     return render_template('mytodo.html')
 
+# MyTodo-ADD(POST)
 @app.route("/mytodo/add", methods=['POST'])
 @login_required
 def mytodo_add():
@@ -107,6 +108,7 @@ def mytodo_add():
 
     return msg 
 
+# Mytodo-GET(GET)
 @app.route("/mytodo/get", methods=['GET'])
 @login_required
 def mytodo_get():
@@ -124,6 +126,19 @@ def mytodo_get():
         tasks_data.append(task_data)
 
     return jsonify(tasks_data)
+
+#Mytodo-Del(DELETE)
+@app.route('/mytodo/del/<int:task_id>', methods=['DELETE'])
+def mytodo_del(task_id):
+    user_id = cast(User, current_user).get_id()
+    task = Task.query.filter_by(id=task_id).first()
+    if task is not None:
+        if int(task.user_id) == int(user_id):
+            task.delete()
+        else:
+            return jsonify({"message": "Don't have access!"}), 406
+    
+    return jsonify({"message": "Success!"}), 200
 
 @app.route("/logout")
 @login_required
