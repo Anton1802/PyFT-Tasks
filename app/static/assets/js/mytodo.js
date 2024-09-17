@@ -17,8 +17,9 @@ function submitAddTask(){
 	const xhttp = new XMLHttpRequest();
 	xhttp.onload = function() {
 		if(this.status == 200){
-			alert(xhttp.responseText)
-			updateListTask()
+			alert(xhttp.responseText);
+			updateListTask();
+            setTimeout(hoverListItem, 400);
 		} else {
 			alert("Problems sending to the server!")
 		}
