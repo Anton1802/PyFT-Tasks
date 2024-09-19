@@ -20,8 +20,6 @@
 		<div class="card h-75" style="width: 100%">
 			<h2 class="card-title text-center mt-3">My Tasks</h2>
 			<div class="card-body h-75">
-				<!-- <p>You don't have tasks.</p> --> 
-				<!-- <p>Please click button "Add Task"</p> --> 
 				<ul id="task-list" class="list-group scrollable-list text-center"></ul>
 			</div>
 	</div>
@@ -79,8 +77,8 @@
 		</div>
       </div>
       <div class="modal-footer">
-        <button onclick="submitEditTask()" type="button" class="btn btn-success">Edit</button>
-        <button onclick="submitDeleteTask()" type="button" class="btn btn-danger">Delete</button>
+        <button id="btn-edit-task" type="button" class="btn btn-success">Edit</button>
+        <button id="btn-delete-task" type="button" class="btn btn-danger">Delete</button>
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">OK</button>
       </div>
     </div>
