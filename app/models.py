@@ -42,3 +42,13 @@ class Task(db.Model):
         db.session.delete(self)
         db.session.commit()
         return self
+
+    def update(self, name, description, dat_success, user_id):
+        self.name: str = name
+        self.description: str = description
+        self.dat_success: DateTime = dat_success
+        self.user_id = user_id
+        
+        db.session.commit()
+
+        return self
