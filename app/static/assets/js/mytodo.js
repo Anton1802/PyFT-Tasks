@@ -1,6 +1,6 @@
 async function getTaskById(id){
 	let response = await fetch('mytodo/get');
-	let jsonText = await response.json()
+	let jsonText = await response.json();
 
 	task = jsonText.filter((task) => task.id == id)[0];
 
@@ -8,11 +8,11 @@ async function getTaskById(id){
 }
 
 function submitAddTask(){
-	let nameTaskInput = document.getElementById('input-nametask')
-	let descriptionTaskInput = document.getElementById('input-description')
-	let datSuccessTaskInput = document.getElementById('input-dat')
+	let nameTaskInput = document.getElementById('input-nametask');
+	let descriptionTaskInput = document.getElementById('input-description');
+	let datSuccessTaskInput = document.getElementById('input-dat');
 
-	let modalWindow = document.getElementById('st1')
+	let modalWindow = document.getElementById('st1');
 
 	const xhttp = new XMLHttpRequest();
 	xhttp.onload = function() {
@@ -21,18 +21,17 @@ function submitAddTask(){
 			updateListTask();
             setTimeout(hoverListItem, 400);
 		} else {
-			alert("Problems sending to the server!")
+			alert("Problems sending to the server!");
 		}
 	}
-	xhttp.open("POST", 'mytodo/add', true)
+	xhttp.open("POST", 'mytodo/add', true);
 	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhttp.send(
 			   `name-task=${nameTaskInput.value}&` + 
 			   `desc-task=${descriptionTaskInput.value}&` +
 			   `dat-succes=${datSuccessTaskInput.value}`
 	);
-
-	bootstrap.Modal.getInstance(modalWindow).hide()
+	bootstrap.Modal.getInstance(modalWindow).hide();
 }
 
 function updateListTask(){
@@ -46,6 +45,21 @@ function updateListTask(){
 		if(this.status == 200){
 			let jsonText = JSON.parse(xhttp.responseText);
 			let listGroup = document.getElementById("task-list");
+
+            if(jsonText.length == 0){
+                listGroup.innerHTML = "";
+
+                let text_a = document.createTextNode("You don't have tasks!");
+                let text_b = document.createTextNode("Please click button: Add Task!");
+
+                listGroup.appendChild(text_a);
+                listGroup.appendChild(document.createElement("br"));
+                listGroup.appendChild(text_b);
+
+                return 
+            } else {
+                listGroup.innerHTML = '';
+            }
 
 			listGroup.innerHTML = ""
 
@@ -71,12 +85,13 @@ function updateListTask(){
 									  `Dat Success: ${dateTimeString}`;
 
 				listGroup.appendChild(newTask);
+                modalViewTask();
 			}
 		}
 	}
-	xhttp.open("GET", 'mytodo/get', true)
-	xhttp.setRequestHeader("Content-type", "application/json")
-	xhttp.send()
+	xhttp.open("GET", 'mytodo/get', true);
+	xhttp.setRequestHeader("Content-type", "application/json");
+	xhttp.send();
 }
 
 async function modalViewTask(){
@@ -89,8 +104,41 @@ async function modalViewTask(){
 		modal.show()
 		$('#input-nametask2').val(task.name);
 		$('#input-description2').val(task.description);
-		$('#input-dat2').val(task.dat_success)
-	})
+		$('#input-dat2').val(task.dat_success);
+
+        $('#btn-delete-task').click(async function(e){
+            let requestOptions = {
+                method: 'DELETE'
+            };
+            let response = await fetch(`mytodo/del/${id}`, requestOptions);
+            let jsonResponse = await response.json();
+            modal.hide();
+            alert(jsonResponse.message);
+            updateListTask();
+        });
+
+        $('#btn-edit-task').click(async function(e){
+            let nameTask = $('#input-nametask2').val();
+            let descriptionTask = $('#input-description2').val();
+            let datTask = $('#input-dat2').val();
+            let requestOptions = {
+                method: 'PUT',
+                body: JSON.stringify({
+                    name_task: nameTask,
+                    description_task: descriptionTask,
+                    dat_task: datTask,
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            let response = await fetch(`mytodo/edit/${id}`, requestOptions);
+            let jsonResponse = await response.json();
+            modal.hide();
+            alert(jsonResponse.message);
+            updateListTask();
+        });
+	});
 }
 
 function hoverListItem(){
@@ -99,12 +147,11 @@ function hoverListItem(){
 		$(this).addClass("active");
 	}, function(e) {
 		e.preventDefault();
-		$(this).removeClass('active')
+		$(this).removeClass('active');
 	})
 }
 
 $(window).on('load', function() {
 	updateListTask();
 	setTimeout(hoverListItem, 400);
-	setTimeout(modalViewTask, 400);
-})
+});
