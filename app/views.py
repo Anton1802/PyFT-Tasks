@@ -99,12 +99,15 @@ def mytodo_add():
     user = cast(User, current_user)
 
     if dat_success is not None:
-        dt: datetime = datetime.strptime(dat_success, '%Y-%m-%dT%H:%M')
-        task_new: Task = Task(name_task, desc_task, dt, user.get_id())
-
-        task_new.save()
-
-        msg: str = "Task added successfully!"
+        try:
+            dt: datetime = datetime.strptime(dat_success, '%Y-%m-%dT%H:%M')
+            task_new: Task = Task(name_task, desc_task, dt, user.get_id())
+            task_new.save()
+        except ValueError:
+            msg: str = "Enter the time according to the format!"
+            return msg
+        else:
+            msg: str = "Task added successfully!"
 
     return msg 
 
@@ -139,6 +142,25 @@ def mytodo_del(task_id):
             return jsonify({"message": "Don't have access!"}), 406
     
     return jsonify({"message": "Success!"}), 200
+
+#Mytodo-Edit(PUT)
+@app.route('/mytodo/edit/<int:task_id>', methods=['PUT'])
+def mytodo_edit(task_id):
+    user_id = cast(User, current_user).get_id()
+    data = request.get_json()
+    task = Task.query.filter_by(id=task_id).first()
+    if task is not None:
+        if int(task.user_id) == int(user_id):
+            task.update(
+                data['name_task'], 
+                data['description_task'], 
+                datetime.strptime(data['dat_task'], "%Y-%m-%dT%H:%M"),
+                user_id,
+            )
+        else:
+            return jsonify({"message": "Don't have access!"}), 406
+
+    return jsonify({'message': "Success"}), 200
 
 @app.route("/logout")
 @login_required
