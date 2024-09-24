@@ -10,7 +10,7 @@
 				</button>
 			</div>
 			<div class="col-6 d-flex justify-content-center align-items-center">
-				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#st2">
+				<button type="button" id="btn-modal-settings-notice" class="btn btn-primary">
 				 Setting Notice 
 				</button>
 			</div>
@@ -26,7 +26,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="st1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="staticBackdropLabel">Add Task</h5>
@@ -39,7 +39,7 @@
 		</div>
 		<div class="input-group mb-3">
 		  <span class="input-group-text">Description</span>
-		  <textarea class="form-control" id="input-description" placeholder="Description..." aria-label="Description"></textarea>
+		  <textarea class="form-control" id="input-description" placeholder="Description..." aria-label="Description" rows="5"></textarea>
 		</div>
 		<div class="input-group mb-3">
             <span class="input-group-text">DaT Success</span>
@@ -56,7 +56,7 @@
 
 <!-- Modal -->
 <div class="modal fade" id="modal-view" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="staticBackdropLabel">Task</h5>
@@ -69,7 +69,7 @@
 		</div>
 		<div class="input-group mb-3">
 		  <span class="input-group-text">Description</span>
-		  <textarea class="form-control" id="input-description2" placeholder="Description..." aria-label="Description"></textarea>
+		  <textarea class="form-control" id="input-description2" placeholder="Description..." aria-label="Description" rows="5"></textarea>
 		</div>
 		<div class="input-group mb-3">
             <span class="input-group-text">DaT Success</span>
@@ -85,19 +85,27 @@
   </div>
 </div>
 
-<div class="modal fade" id="st2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<!--Modal Settings Notice-->
+<div class="modal fade" id="modal-settings-notice" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <h5 class="modal-title" id="staticBackdropLabel">Notice Settings</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        2 modal
+        <div class="input-group mb-3">
+          <span class="input-group-text">Chat ID</span>
+          <input id="input-chat-id" type="text" class="form-control" aria-label="Chat Id" placeholder="Example: 1622956968">
+        </div>
+        <div class="input-group mb-3">
+          <span class="input-group-text">Interval Time (minutes)</span>
+          <input type="number" id="input-interval-time" max=120 min=30 class="form-control" aria-label="Interval Time" placeholder="30-120">
+        </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+        <button id="stop-settings-notice" type="button" class="btn btn-danger">STOP</button>
+        <button id="apply-settings-notice" type="button" class="btn btn-primary">OK</button>
       </div>
     </div>
   </div>
