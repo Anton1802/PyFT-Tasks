@@ -5,9 +5,11 @@ from werkzeug.wrappers import Response
 from app import app
 from flask import jsonify, redirect, render_template, request, url_for 
 from app.forms import UpandInForm
-from app.models import Task, User
-from app import bc, lm
+from app.models import Task, User, Notice
+from app import bc, lm, bgs
 from typing import cast
+from app.util import send_message
+from apscheduler.schedulers import SchedulerAlreadyRunningError
 
 
 @lm.user_loader
@@ -132,6 +134,7 @@ def mytodo_get():
 
 #Mytodo-Del(DELETE)
 @app.route('/mytodo/del/<int:task_id>', methods=['DELETE'])
+@login_required
 def mytodo_del(task_id):
     user_id = cast(User, current_user).get_id()
     task = Task.query.filter_by(id=task_id).first()
@@ -145,6 +148,7 @@ def mytodo_del(task_id):
 
 #Mytodo-Edit(PUT)
 @app.route('/mytodo/edit/<int:task_id>', methods=['PUT'])
+@login_required
 def mytodo_edit(task_id):
     user_id = cast(User, current_user).get_id()
     data = request.get_json()
@@ -161,6 +165,76 @@ def mytodo_edit(task_id):
             return jsonify({"message": "Don't have access!"}), 406
 
     return jsonify({'message': "Success"}), 200
+
+#Mytodo-Notice-Start(POST)
+@app.route('/mytodo/notice/start', methods=["POST"])
+@login_required
+def mytodo_notice_start():
+    user = cast(User, current_user)
+    tasks: List = Task.query.filter_by(user_id=user.get_id()).all()
+
+    if len(tasks) == 0:
+        return jsonify({"message": "No tasks!"})
+
+    data = request.get_json()
+    user_id = int(user.get_id())
+
+    notice_config = Notice.query.filter_by(user_id=user_id).first()
+
+    if notice_config is None:
+        notice_config = Notice(data['chat_id'], data['interval'], user_id)
+        notice_config.save()
+    else:
+        notice_config.update(data['chat_id'], data['interval'], user_id)
+        
+    jobs = bgs.get_jobs()
+    for job in jobs:
+        if int(job.name) == int(user_id):
+            job.pause()
+            job.remove()    
+
+    for task in tasks:
+        message = (
+            f"Name task: {task.name} \n"
+            f"Description task: {task.description} \n"
+            f"Time execute: {task.dat_success}"
+        )            
+
+        bgs.add_job(
+            send_message, 
+            'interval', 
+            minutes=int(notice_config.interval), 
+            args=[message, notice_config.chat_id], 
+            name=str(user_id),
+        )
+
+    return jsonify({"message": "Notice started!"})
+
+#Mytodo-Notice-Stop(DELETE)
+@app.route('/mytodo/notice/stop', methods=["DELETE"])
+@login_required
+def mytodo_notice_stop():
+    user = cast(User, current_user)
+    user_id = user.get_id()
+    jobs = bgs.get_jobs()
+    for job in jobs:
+        if int(job.name) == int(user_id):
+            job.pause()
+            job.remove()
+
+    return jsonify({"message": "Notice stopped!"})
+
+#Mytodo-Notice-Get(GET)
+@app.route('/mytodo/notice/get', methods=['GET'])
+@login_required
+def mytodo_notice_get():
+    user = cast(User, current_user)
+    notice_config = Notice.query.filter_by(user_id=user.get_id()).first()
+
+    return jsonify({
+        "chat_id": notice_config.chat_id,
+        "interval": notice_config.interval
+    })
 
 @app.route("/logout")
 @login_required
