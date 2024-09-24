@@ -52,3 +52,29 @@ class Task(db.Model):
         db.session.commit()
 
         return self
+
+
+class Notice(db.Model):
+    id: int = db.Column(db.Integer, primary_key=True)
+    chat_id: str = db.Column(db.String(100), nullable=False)
+    interval: str = db.Column(db.Integer, nullable=False)
+    user_id: int = db.Column(db.Integer, nullable=False)
+
+    def __init__(self, chat_id, interval, user_id) -> None:
+        self.chat_id = chat_id
+        self.interval = interval
+        self.user_id = user_id
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    def update(self, chat_id, interval, user_id):
+        self.chat_id = chat_id
+        self.interval = interval
+        self.user_id = user_id
+
+        db.session.commit()
+
+        return self
