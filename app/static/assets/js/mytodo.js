@@ -7,7 +7,7 @@ async function getTaskById(id){
 	return task;
 }
 
-function submitAddTask(){
+async function submitAddTask(){
 	let nameTaskInput = document.getElementById('input-nametask');
 	let descriptionTaskInput = document.getElementById('input-description');
 	let datSuccessTaskInput = document.getElementById('input-dat');
@@ -15,10 +15,11 @@ function submitAddTask(){
 	let modalWindow = document.getElementById('st1');
 
 	const xhttp = new XMLHttpRequest();
-	xhttp.onload = function() {
+	xhttp.onload = async function() {
 		if(this.status == 200){
 			alert(xhttp.responseText);
 			updateListTask();
+			stopNotice();
             setTimeout(hoverListItem, 400);
 		} else {
 			alert("Problems sending to the server!");
@@ -106,18 +107,19 @@ async function modalViewTask(){
 		$('#input-description2').val(task.description);
 		$('#input-dat2').val(task.dat_success);
 
-        $('#btn-delete-task').click(async function(e){
+        $('#btn-delete-task').off("click").one("click", async function(e){
             let requestOptions = {
                 method: 'DELETE'
             };
             let response = await fetch(`mytodo/del/${id}`, requestOptions);
             let jsonResponse = await response.json();
-            modal.hide();
             alert(jsonResponse.message);
+			modal.hide();
             updateListTask();
+			await stopNotice();
         });
 
-        $('#btn-edit-task').click(async function(e){
+        $('#btn-edit-task').off("click").one("click", async function(e){
             let nameTask = $('#input-nametask2').val();
             let descriptionTask = $('#input-description2').val();
             let datTask = $('#input-dat2').val();
@@ -134,12 +136,59 @@ async function modalViewTask(){
             };
             let response = await fetch(`mytodo/edit/${id}`, requestOptions);
             let jsonResponse = await response.json();
-            modal.hide();
-            alert(jsonResponse.message);
+			modal.hide();
+			alert(jsonResponse.message);
             updateListTask();
         });
 	});
 }
+
+async function getNotice(){
+	let requestOptions = {
+		method: "GET"
+	}
+
+	let response = await fetch('mytodo/notice/get', requestOptions)
+	let jsonResponse = await response.json()
+
+	return jsonResponse
+}
+
+async function startNotice(){
+	let chat_id = $('#input-chat-id').val();
+	let interval = $('#input-interval-time').val();
+
+	let requestOptions = {
+		method: "POST",
+		body: JSON.stringify({
+			chat_id: chat_id,
+			interval: interval,
+		}),
+		headers: {
+			'Content-Type': 'application/json'
+		}
+	};
+
+	let response = await fetch('mytodo/notice/start', requestOptions);
+	let jsonResponse = await response.json();
+
+	alert(jsonResponse.message);
+}
+
+async function stopNotice(){
+	let requestOptions = {
+		method: "DELETE",
+		headers: {
+			"Content-Type": "application/json"
+		}
+	};
+
+	let response = await fetch('mytodo/notice/stop', requestOptions)
+	let jsonResponse = await response.json();
+
+	alert(jsonResponse.message)
+}
+
 
 function hoverListItem(){
 	$('.list-group-item').hover(function(e) {
@@ -154,4 +203,20 @@ function hoverListItem(){
 $(window).on('load', function() {
 	updateListTask();
 	setTimeout(hoverListItem, 400);
+
+	$('#btn-modal-settings-notice').click(async function() {
+		let jsonConfig = await getNotice()
+		$('#input-chat-id').val(jsonConfig['chat_id']);
+		$('#input-interval-time').val(jsonConfig['interval']);
+		let modalNotice = new bootstrap.Modal($('#modal-settings-notice'));
+		modalNotice.show()
+		$('#apply-settings-notice').off('click').one("click", async function () {
+			await startNotice();
+			modalNotice.hide();
+		})
+		$('#stop-settings-notice').off('click').one("click", async function () {
+			await stopNotice();
+			modalNotice.hide();
+		})
+	});
 });
