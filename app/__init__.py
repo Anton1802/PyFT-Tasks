@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 basedir: str = os.path.abspath(os.path.dirname(__file__))
 
@@ -19,6 +21,9 @@ bootstrap: Bootstrap5 = Bootstrap5(app)
 
 lm: LoginManager = LoginManager()
 lm.init_app(app)
+
+bgs = BackgroundScheduler()
+bgs.start()
 
 @app.before_request
 def init_database() -> None:
