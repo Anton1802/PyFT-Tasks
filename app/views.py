@@ -92,26 +92,19 @@ def mytodo() -> str:
 @app.route("/mytodo/add", methods=['POST'])
 @login_required
 def mytodo_add():
-    name_task: str | None = request.form.get('name-task')
-    desc_task: str | None = request.form.get('desc-task')
-    dat_success: str | None = request.form.get('dat-succes')
-    
-    msg: str = ""
+    data = request.get_json()
     
     user = cast(User, current_user)
 
-    if dat_success is not None:
+    if data['dat_success'] is not None:
         try:
-            dt: datetime = datetime.strptime(dat_success, '%Y-%m-%dT%H:%M')
-            task_new: Task = Task(name_task, desc_task, dt, user.get_id())
+            dt: datetime = datetime.strptime(data['dat_success'], '%Y-%m-%dT%H:%M')
+            task_new: Task = Task(data['name_task'], data['desc_task'], dt, user.get_id())
             task_new.save()
         except ValueError:
-            msg: str = "Enter the time according to the format!"
-            return msg
-        else:
-            msg: str = "Task added successfully!"
+            return jsonify({"message": "Enter the time according to the format!"})
 
-    return msg 
+    return jsonify({"message": "Task added successfully!"})
 
 # Mytodo-GET(GET)
 @app.route("/mytodo/get", methods=['GET'])
@@ -195,10 +188,10 @@ def mytodo_notice_start():
 
     for task in tasks:
         message = (
-            f"Name task: {task.name} \n"
-            f"Description task: {task.description} \n"
-            f"Time execute: {task.dat_success}"
-        )            
+            f"*📝 Task Name:* {task.name}\n"
+            f"*📝 Task Description:* \n{task.description}\n\n"
+            f"*⏰ Execution Time:* {task.dat_success}"
+        )      
 
         bgs.add_job(
             send_message, 
@@ -235,6 +228,22 @@ def mytodo_notice_get():
         "chat_id": notice_config.chat_id,
         "interval": notice_config.interval
     })
+
+@app.route('/mytodo/notice/get_jobs', methods=['GET'])
+@login_required
+def mytodo_notice_get_jobs():
+    user = cast(User, current_user)
+    jobs = bgs.get_jobs()
+
+    jobs_user = []
+    for job in jobs:
+        if int(job.name) == int(user.get_id()):
+            jobs_user.append({
+                "id": job.id,
+                "name": job.name, 
+            })
+
+    return jsonify(jobs_user)
 
 @app.route("/logout")
 @login_required
