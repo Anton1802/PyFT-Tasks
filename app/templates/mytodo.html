@@ -5,7 +5,7 @@
 	<div class="container-fluid mt-4">
 		<div class="row">
 			<div class="col-6 d-flex justify-content-center align-items-center">
-				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#st1">
+				<button type="button" id="btn-modal-add-task" class="btn btn-primary">
 				  Add Task
 				</button>
 			</div>
@@ -25,7 +25,7 @@
 	</div>
 
 <!-- Modal -->
-<div class="modal fade" id="st1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="modal-add-task" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -48,7 +48,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <button onclick="submitAddTask()" type="button" class="btn btn-primary">Add</button>
+        <button type="button" id="modal-btn-add-task" class="btn btn-primary">Add</button>
       </div>
     </div>
   </div>
@@ -100,7 +100,8 @@
         </div>
         <div class="input-group mb-3">
           <span class="input-group-text">Interval Time (minutes)</span>
-          <input type="number" id="input-interval-time" max=120 min=30 class="form-control" aria-label="Interval Time" placeholder="30-120">
+          <span class="input-group-text" id="input-current-value"></span>
+          <input type="range" id="input-interval-time" min=1 class="form-range" aria-label="Interval Time" placeholder="30-120">
         </div>
       </div>
       <div class="modal-footer">
