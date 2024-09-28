@@ -1,6 +1,7 @@
 import os
+import datetime
 
-from flask import Flask
+from flask import Flask, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_bootstrap import Bootstrap5
@@ -28,5 +29,10 @@ bgs.start()
 @app.before_request
 def init_database() -> None:
     db.create_all()
+
+@app.before_request
+def change_session_lifetime():
+    session.permanent = True
+    session.permanent_session_lifetime = datetime.timedelta(days=3)
 
 from app import views, models
