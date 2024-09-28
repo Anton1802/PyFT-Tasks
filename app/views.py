@@ -83,6 +83,10 @@ def signin() -> str | Response:
 
     return render_template('signin.html', form=signin_form, msg=msg)
 
+@lm.unauthorized_handler     
+def unauthorized_callback():            
+       return redirect(url_for('signin'))
+
 @app.route("/mytodo")
 @login_required
 def mytodo() -> str:
