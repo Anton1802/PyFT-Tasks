@@ -226,12 +226,18 @@ def mytodo_notice_stop():
 @login_required
 def mytodo_notice_get():
     user = cast(User, current_user)
-    notice_config = Notice.query.filter_by(user_id=user.get_id()).first()
 
-    return jsonify({
-        "chat_id": notice_config.chat_id,
-        "interval": notice_config.interval
-    })
+    notice_config = Notice.query.filter_by(user_id=user.get_id()).first()
+    if notice_config is None:
+        return jsonify({
+            "chat_id": "",
+            "interval": "",
+        })
+    else:
+        return jsonify({
+            "chat_id": notice_config.chat_id,
+            "interval": notice_config.interval,
+        })
 
 @app.route('/mytodo/notice/get_jobs', methods=['GET'])
 @login_required
